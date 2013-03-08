@@ -4,9 +4,11 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.c \
-    gaussJordan.c
+    gaussJordan.c \
+    matrizes.c
 
 HEADERS += \
     gaussJordan.h \
-    util.h
+    util.h \
+    matrizes.h
 
