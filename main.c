@@ -1,54 +1,47 @@
 #include <stdio.h>
 #include "gaussJordan.h"
 #include "matrizes.h"
-void imprimirMatrizQuadrada(int dimensao, double** matriz);
-void imprimirMatrizAumentada(int dimensao, double** matriz);
+void imprimirMatriz(Matriz matriz);
 
 int main(void)
 {
-    double Matriz[2][2] = {{4,3},{8,7}};
-    double **pMatriz = NULL;
-    double **pMatrizInversa = NULL;
-    double **pMatrizTransposta = NULL;
+    double matriz[3][3] = {{2,-1,0},{-1,2,-1},{0,-1,2}};
+    Matriz *pMatriz = NULL;
+    Matriz *pMatrizInversa = NULL;
+    Matriz *pMatrizTransposta = NULL;
     int i,j;
 
-    pMatriz = (double**)malloc(2*sizeof(double*));
+    pMatriz = criarMatriz(3,3);
     if(pMatriz == NULL) return -1;
-    for(i = 0; i < 2; i++)
-    {
-        pMatriz[i] = (double*) malloc(2*sizeof(double));
-    }
-    for(i = 0; i < 2; i++)
-        for(j = 0; j < 2; j++)
-            pMatriz[i][j] = Matriz[i][j];
 
-    pMatrizInversa = criarMatrizInversa(2, pMatriz);
-    pMatrizTransposta = transposto(pMatriz, 2, 2);
+    for(i = 0; i < 3; i++)
+        for(j = 0; j < 3; j++)
+            pMatriz->conteudo[i][j] = matriz[i][j];
+    pMatriz->linhas = 3;
+    pMatriz->colunas = 3;
+
+    pMatrizInversa = criarMatrizInversa(pMatriz);
+    pMatrizTransposta = transposto(*pMatriz);
+
     printf("Matriz original\n");
-    imprimirMatrizQuadrada(2, pMatriz);
+    imprimirMatriz(*pMatriz);
     printf("Matriz inversa\n");
-    imprimirMatrizQuadrada(2, pMatrizInversa);
+    imprimirMatriz(*pMatrizInversa);
     printf("Matriz transposta\n");
-    imprimirMatrizQuadrada(2, pMatrizTransposta);
+    imprimirMatriz(*pMatrizTransposta);
     // desalocacoes
-    for(i = 0; i < 2; i++)
-    {
-        free(pMatriz[i]);
-        pMatriz[i] = NULL;
-    }
-    free(pMatriz);
-    pMatriz = NULL;
+    destruirMatriz(pMatriz);
+    destruirMatriz(pMatrizTransposta);
     return 0;
 }
 
-void imprimirMatrizQuadrada(int dimensao, double** matriz)
+void imprimirMatriz(Matriz matriz)
 {
     int i,j;
-    if(matriz == NULL) return;
-    for(i = 0; i < dimensao; i++)
+    for(i = 0; i < matriz.linhas; i++)
     {
-        for(j = 0; j < dimensao; j++)
-            printf("%f\t", matriz[i][j]);
+        for(j = 0; j < matriz.colunas; j++)
+            printf("%f\t", matriz.conteudo[i][j]);
         printf("\n");
     }
 }
