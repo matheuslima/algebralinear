@@ -6,9 +6,23 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+// Estrutura para abstrair uma matriz
+typedef struct{
+    double** conteudo; // elementos da matriz
+    int linhas; // numero de linhas da matriz
+    int colunas; // numero de colunas da matriz
+}Matriz;
+
+// Efetua a alocacao de uma matriz a partir da especificacao de suas dimensoes.
+// Todos os seus elementos sao inicializados com zero
+Matriz* criarMatriz(int linhas, int colunas);
+
+// Desaloca a matriz
+void destruirMatriz(Matriz* matriz);
+
 // Efetua o produto entre duas matrizes A e B, desde que suas dimensoes
 // sejam MxN e NxP respectivamente.
-double** produto(double** matrizA, int linhasA, int colunasA, double** matrizB, int linhasB, int colunasB);
+Matriz* produto(Matriz matrizA, Matriz matrizB);
 
 // Obtem o transposto de uma matriz
 double** transposto(double** matriz, int linhas, int colunas);

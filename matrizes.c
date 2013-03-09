@@ -1,51 +1,85 @@
 #include "matrizes.h"
 
-double** produto(double **matrizA, int linhasA, int colunasA, double **matrizB, int linhasB, int colunasB)
+Matriz* criarMatriz(int linhas, int colunas)
 {
-    double** matrizProduto = NULL;
-    int i,j,k;
-    // Verifica se o produto pode ser feito. Isso ocorre se colunasA == linhasB
-    bool produtoPossivel = colunasA == linhasB;
-    if(!produtoPossivel) return NULL;
+    int i,j;
+    Matriz* matriz = NULL;
+    matriz = (Matriz*) malloc(sizeof(Matriz));
 
-    matrizProduto = (double**) malloc(linhasA*sizeof(double*));
-    if(matrizProduto == NULL) goto tratarErro;
-    for(i = 0; i < linhasA; i++)
+    if(matriz == NULL) return NULL;
+
+    matriz->conteudo = (double**) malloc(linhas*sizeof(double*));
+    if(matriz->conteudo == NULL) goto tratarErro;
+
+    for(i = 0; i < linhas; i++)
     {
-        matrizProduto[i] = (double*) malloc(colunasB*sizeof(double));
-        if(matrizProduto[i] == NULL) goto tratarErro;
+        matriz->conteudo[i] = (double*) malloc(colunas*sizeof(double));
+        if(matriz->conteudo[i] == NULL) goto tratarErro;
     }
 
-    for(i = 0; i < linhasA; i++)
-        for(j = 0; j < colunasB; j++)
-            matrizProduto[i][j] = 0;
+    // Inicializa a matriz
+    for(i = 0; i < linhas; i++)
+        for(j = 0; j < colunas; j++)
+            matriz->conteudo[i][j] = 0;
+
+    matriz->linhas = linhas;
+    matriz->colunas = colunas;
+
+    return matriz;
+tratarErro:
+    destruirMatriz(matriz);
+    return NULL;
+}
+
+void destruirMatriz(Matriz *matriz)
+{
+    int i;
+    if(matriz != NULL)
+    {
+        if(matriz->conteudo != NULL)
+        {
+            for(i = 0; i < matriz->linhas; i++)
+            {
+                if(matriz->conteudo[i] != NULL)
+                {
+                    free(matriz->conteudo[i]);
+                    matriz->conteudo[i] = NULL;
+                }
+            }
+            free(matriz->conteudo);
+            matriz->conteudo = NULL;
+        }
+        free(matriz);
+        matriz = NULL;
+    }
+}
+
+Matriz* produto(Matriz matrizA, Matriz matrizB)
+{
+    Matriz* pMatrizProduto = NULL;
+    int i,j,k;
+    // Verifica se o produto pode ser feito. Isso ocorre se colunasA == linhasB
+    bool produtoPossivel = matrizA.colunas == matrizB.linhas;
+    if(!produtoPossivel) return NULL;
+
+    pMatrizProduto = criarMatriz(matrizA.linhas, matrizB.colunas);
+
+    if(pMatrizProduto == NULL) goto tratarErro;
 
     //Efetua a multiplicacao entre as matrizes
-    for(i = 0; i < linhasA; i++)
+    for(i = 0; i < matrizA.linhas; i++)
     {
-        for(j = 0; j < colunasB; j++)
+        for(j = 0; j < matrizB.colunas; j++)
         {
-            for(k = 0; k < colunasA; k++)
-                matrizProduto[i][j] += matrizA[i][k]*matrizB[k][j];
+            for(k = 0; k < matrizA.colunas; k++)
+                pMatrizProduto->conteudo[i][j] += matrizA.conteudo[i][k]*matrizB.conteudo[k][j];
         }
     }
 
 retorno:
-    return matrizProduto;
+    return pMatrizProduto;
 tratarErro:
-    if(matrizProduto != NULL)
-    {
-        for(i = 0; i < linhasA; i++)
-        {
-            if(matrizProduto[i] != NULL)
-            {
-                free(matrizProduto[i]);
-                matrizProduto[i] = NULL;
-            }
-        }
-        free(matrizProduto);
-        matrizProduto = NULL;
-    }
+    destruirMatriz(pMatrizProduto);
     goto retorno;
 }
 
