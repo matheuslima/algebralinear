@@ -1,47 +1,25 @@
 #include "gaussJordan.h"
 
-double** criarMatrizAumentada(int dimensao, double** matriz, Status *status)
+Matriz *criarMatrizAumentada(Matriz *matriz, Status *status)
 {
-    double** matrizAumentada = NULL;
+    Matriz* matrizAumentada = NULL;
     int i, j;
     *status = sucesso;
-    matrizAumentada = (double**) malloc(dimensao*sizeof(double*));
-    if(matrizAumentada == NULL) {*status = erroAlocacao; goto tratarErro;}
-    for(i = 0; i < dimensao; i++)
-    {
-        matrizAumentada[i] = (double*) malloc(2*dimensao*sizeof(double));
-        if(matrizAumentada[i]==NULL){ *status = erroAlocacao; goto tratarErro;}
-    }
-    // Inicializa a matriz aumentada com zeros
-    for(i = 0; i < dimensao; i++)
-        for(j = 0; j < 2*dimensao; j++)
-            matrizAumentada[i][j] = 0;
+
+    if(!MATRIZ_QUADRADA(matriz)){*status = erroMatrizNaoInvertivel; return NULL;}
+
+    matrizAumentada = criarMatriz(matriz->linhas, 2*matriz->colunas);
+    if(matrizAumentada == NULL) return NULL;
+
     // Copia a matriz passada como parametro para a metade esquerda da matriz aumentada
-    for(i = 0; i < dimensao; i++)
-        for(j = 0; j < dimensao; j++)
-            matrizAumentada[i][j] = matriz[i][j];
+    for(i = 0; i < matriz->linhas; i++)
+        for(j = 0; j < matriz->colunas; j++)
+            matrizAumentada->conteudo[i][j] = matriz->conteudo[i][j];
     // Coloca uma matriz identidade na metdade direita da matriz aumentada
-    for(i = 0; i < dimensao; i++)
-        matrizAumentada[i][i+dimensao] = 1;
+    for(i = 0; i < matriz->linhas; i++)
+        matrizAumentada->conteudo[i][i+matriz->colunas] = 1;
 
-retorno:
     return matrizAumentada;
-
-tratarErro:
-    if(matrizAumentada != NULL)
-    {
-        for(i = 0; i < dimensao; i++)
-        {
-            if(matrizAumentada[i] != NULL)
-            {
-                free(matrizAumentada[i]);
-                matrizAumentada[i] = NULL;
-            }
-        }
-        free(matrizAumentada);
-        matrizAumentada = NULL;
-    }
-    goto retorno;
 }
 
 double* combinacaoLinear(double *X, double *Y, double a, double b, int tamanho)
@@ -55,7 +33,6 @@ double* combinacaoLinear(double *X, double *Y, double a, double b, int tamanho)
     {
         vetor[i] = a*X[i] + b*Y[i];
     }
-retorno:
     return vetor;
     // Desaloca recurso caso haja problema na alocao de memoria
 tratarErro:
@@ -64,191 +41,128 @@ tratarErro:
         free(vetor);
         vetor = NULL;
     }
-    goto retorno;
+    return NULL;
 }
 
-double** criarMatrizTriangular(int dimensao, double **matrizAumentada, Status *status)
+Matriz *criarMatrizTriangular(Matriz *matrizAumentada, Status *status)
 {
-    double** matrizTriangular = NULL;
+    Matriz* matrizTriangular = NULL;
     double pivo, elemento;
     int i,j;
     *status = sucesso;
 
     // Aloca a matriz triangular e verifica a alocacao
-    matrizTriangular = (double**) malloc(dimensao*sizeof(double*));
-    if(matrizTriangular == NULL) { *status = erroAlocacao; goto tratarErro;}
-    for(i = 0; i < dimensao; i++)
-    {
-        matrizTriangular[i] = (double*) malloc(2*dimensao*sizeof(double));
-        if(matrizTriangular[i] == NULL) {*status = erroAlocacao; goto tratarErro;}
-    }
+    matrizTriangular = criarMatriz(matrizAumentada->linhas,matrizAumentada->colunas);
+    if(matrizTriangular == NULL) return NULL;
 
     // Inicializa a matriz triangular com os elementos da matriz aumentada
-    for(i = 0; i < dimensao; i++)
-        for(j = 0; j < 2*dimensao; j++)
-            matrizTriangular[i][j] = matrizAumentada[i][j];
+    for(i = 0; i < matrizAumentada->linhas; i++)
+        for(j = 0; j < matrizAumentada->colunas; j++)
+            matrizTriangular->conteudo[i][j] = matrizAumentada->conteudo[i][j];
 
     // Zera os elementos abaixo do primeiro elemento da primeira coluna por
     // meio de combinacoes lineares entre as linhas
-    for(i = 0; i < dimensao - 1; i++)
+    for(i = 0; i < matrizTriangular->linhas - 1; i++)
     {
-        pivo = matrizTriangular[i][i];
-        for(j = i+1; j < dimensao; j++)
+        pivo = matrizTriangular->conteudo[i][i];
+        for(j = i+1; j < matrizTriangular->linhas; j++)
         {
-            elemento = matrizTriangular[j][i];
+            elemento = matrizTriangular->conteudo[j][i];
             // Se o primeiro elemento da coluna eh "a" e o elemento de uma linha
             // inferior na primeira coluna eh "b", entao para zerar o elemento
             // dessa linha, deve-se multiplicar a primeira linha por b/a e subtrair
             // o resultado da linha inferior. Essa combinacao linear deve substituir
             // a linha cujo elemento sera zerado
-            matrizTriangular[j] = combinacaoLinear(matrizTriangular[i],
-                                                   matrizTriangular[j],
+            matrizTriangular->conteudo[j] = combinacaoLinear(matrizTriangular->conteudo[i],
+                                                   matrizTriangular->conteudo[j],
                                                    -elemento/pivo,
                                                    1,
-                                                   2*dimensao);
+                                                   2*matrizTriangular->linhas);
         }
     }
-retorno:
     return matrizTriangular;
-
-    // Caso haja algum problema nas alocacoes de memoria, faz a liberacao
-    // dos recursos alocados
-tratarErro:
-    if(matrizTriangular != NULL)
-    {
-        for(i = 0; i < dimensao; i++)
-        {
-            if(matrizTriangular[i] != NULL)
-            {
-                free(matrizTriangular[i]);
-                matrizTriangular[i] = NULL;
-            }
-        }
-        free(matrizTriangular);
-        matrizTriangular = NULL;
-    }
-    goto retorno;
 }
 
-bool verificarInvertibilidadeMatriz(int dimensao, double **matrizTriangular)
+bool verificarInvertibilidadeMatriz(Matriz* matrizTriangular)
 {
     double determinante = 1;
     int i;
-    for(i = 0; i < dimensao; i++)
-        determinante *= matrizTriangular[i][i];
+    for(i = 0; i < matrizTriangular->linhas; i++)
+        determinante *= matrizTriangular->conteudo[i][i];
     return (determinante != 0);
 }
 
-double** criarMatrizEscalonada(int dimensao, double **matrizTriangular, Status *status)
+Matriz *criarMatrizEscalonada(Matriz *matrizTriangular, Status *status)
 {
     double pivo, elemento;
-    double** matrizEscalonada = NULL;
+    Matriz* matrizEscalonada = NULL;
     int i,j;
     *status = sucesso;
-    matrizEscalonada = (double**) malloc(dimensao*sizeof(double*));
-    if(matrizEscalonada == NULL){*status = erroAlocacao; goto tratarErro;}
-    for(i = 0; i < dimensao; i++)
-    {
-        matrizEscalonada[i] = (double*) malloc(2*dimensao*sizeof(double));
-        if(matrizEscalonada[i] == NULL){*status = erroAlocacao; goto tratarErro;}
-    }
+    matrizEscalonada = criarMatriz(matrizTriangular->linhas,matrizTriangular->colunas);
+    if(matrizEscalonada == NULL) return NULL;
+
 
     // Inicializa a matriz escalonada com os elementos da matriz triangular
-    for(i = 0; i < dimensao; i++)
-        for(j = 0; j < 2*dimensao; j++)
-            matrizEscalonada[i][j] = matrizTriangular[i][j];
+    for(i = 0; i < matrizTriangular->linhas; i++)
+        for(j = 0; j < matrizTriangular->colunas; j++)
+            matrizEscalonada->conteudo[i][j] = matrizTriangular->conteudo[i][j];
 
     // Zera os elementos acima dos pivos
-    for(i = 1; i < dimensao; i++)
+    for(i = 1; i < matrizTriangular->linhas; i++)
         for(j = 0; j < i; j++)
         {
-            pivo = matrizEscalonada[i][i];
-            elemento = matrizEscalonada[j][i];
-            matrizEscalonada[j] = combinacaoLinear(matrizEscalonada[i],
-                                                   matrizEscalonada[j],
+            pivo = matrizEscalonada->conteudo[i][i];
+            elemento = matrizEscalonada->conteudo[j][i];
+            matrizEscalonada->conteudo[j] = combinacaoLinear(matrizEscalonada->conteudo[i],
+                                                   matrizEscalonada->conteudo[j],
                                                    -elemento/pivo,
                                                    1,
-                                                   2*dimensao);
+                                                   2*matrizEscalonada->linhas);
         }
 
     // Divide cada linha pelo seu pivo
-    for(i = 0; i < dimensao; i++)
+    for(i = 0; i < matrizTriangular->linhas; i++)
     {
-        pivo = matrizEscalonada[i][i];
-        for(j = 0; j < 2*dimensao; j++)
+        pivo = matrizEscalonada->conteudo[i][i];
+        for(j = 0; j < matrizTriangular->colunas; j++)
         {
-            matrizEscalonada[i][j] = matrizEscalonada[i][j]/pivo;
+            matrizEscalonada->conteudo[i][j] = matrizEscalonada->conteudo[i][j]/pivo;
         }
     }
-retorno:
     return matrizEscalonada;
-    // Desaloca os recurso previamente alocados em caso de algum erro
-tratarErro:
-    if(matrizEscalonada != NULL)
-    {
-        for(i = 0; i < dimensao; i++)
-        {
-            if(matrizEscalonada[i] != NULL)
-            {
-                free(matrizEscalonada[i]);
-                matrizEscalonada[i] = NULL;
-            }
-        }
-        free(matrizEscalonada);
-        matrizEscalonada = NULL;
-    }
-    goto retorno;
 }
 
-double** criarMatrizInversa(int dimensao, double **matriz)
+Matriz* criarMatrizInversa(Matriz *matriz)
 {
     int i, j;
     Status status;
-    double **pMatrizAumentada, **pMatrizTriangular, **pMatrizEscalonada, **pMatrizInversa;
+    Matriz *pMatrizAumentada, *pMatrizTriangular, *pMatrizEscalonada, *pMatrizInversa;
 
-    pMatrizAumentada = criarMatrizAumentada(dimensao, matriz, &status);
+    pMatrizAumentada = criarMatrizAumentada(matriz, &status);
     // Se ocorreu algum erro na criacao da matriz aumentada, retorna NULL
     if(!OK(&status)) return NULL;
 
-    pMatrizTriangular = criarMatrizTriangular(dimensao, pMatrizAumentada, &status);
+    pMatrizTriangular = criarMatrizTriangular(pMatrizAumentada, &status);
     // Se ocorreu algum erro na criacao da matriz triangular, retorna NULL
     if(!OK(&status)) return NULL;
 
     // Se a matriz nao for invertivel, retorna NULL
-    if(!verificarInvertibilidadeMatriz(dimensao, pMatrizTriangular)) return NULL;
+    if(!verificarInvertibilidadeMatriz(pMatrizTriangular)) return NULL;
 
-    pMatrizEscalonada = criarMatrizEscalonada(dimensao, pMatrizTriangular, &status);
+    pMatrizEscalonada = criarMatrizEscalonada(pMatrizTriangular, &status);
     // Se ocorreu algum erro na criacao da matriz escalonada, retorna NULL
     if(!OK(&status)) return NULL;
 
-    pMatrizInversa = (double**) malloc(dimensao*sizeof(double*));
-    if(pMatrizInversa == NULL) goto tratarErro;
-    for(i = 0; i < dimensao; i++)
-    {
-        pMatrizInversa[i] = (double*) malloc(2*dimensao*sizeof(double));
-        if(pMatrizInversa == NULL) goto tratarErro;
-    }
-    for(i = 0; i < dimensao; i++)
-        for(j = 0; j < dimensao; j++)
-            pMatrizInversa[i][j] = pMatrizEscalonada[i][j+dimensao];
+    // Gera a matriz inversa
+    pMatrizInversa = criarMatriz(matriz->linhas, matriz->linhas);
+    for(i = 0; i < matriz->linhas; i++)
+        for(j = 0; j < matriz->linhas; j++)
+            pMatrizInversa->conteudo[i][j] = pMatrizEscalonada->conteudo[i][j+matriz->linhas];
 
+    // Faz as desalocaoes
+    destruirMatriz(pMatrizAumentada);
+    destruirMatriz(pMatrizTriangular);
+    destruirMatriz(pMatrizEscalonada);
 
-retorno:
     return pMatrizInversa;
-tratarErro:
-    if(pMatrizInversa != NULL)
-    {
-        for(i = 0; i < dimensao; i++)
-        {
-            if(pMatrizInversa[i] != NULL)
-            {
-                free(pMatrizInversa[i]);
-                pMatrizInversa[i] = NULL;
-            }
-            free(pMatrizInversa);
-            pMatrizInversa = NULL;
-        }
-
-    }
-    goto retorno;
 }

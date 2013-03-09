@@ -34,24 +34,24 @@
 // Cria uma matriz aumentada de dimensao N x 2N a partir da matriz quadrada passada.
 // Essa matriz consiste da matriz passada como parametro ao lado da matriz identidade
 // de dimensao N
-double** criarMatrizAumentada(int dimensao, double** matriz, Status *status);
+Matriz* criarMatrizAumentada(Matriz* matriz, Status *status);
 
 // Efetua a combinacao linear entre dois vetores:
 // a*X + b*Y
 double* combinacaoLinear(double* X, double* Y, double a, double b, int tamanho);
 
 // Cria uma matriz triangular superior a partir da matriz aumentada.
-double** criarMatrizTriangular(int dimensao, double** matrizAumentada, Status *status);
+Matriz* criarMatrizTriangular(Matriz* matrizAumentada, Status *status);
 
 // A partir da matriz triangular, verifica se a matriz original pode ser
 // invertida. Isso eh feito analisando-se o produto dos pivos. Se ele for
 // diferente de zero, a matriz eh invertivel, se nao for, ela nao eh invertivel.
-bool verificarInvertibilidadeMatriz(int dimensao, double** matrizTriangular);
+bool verificarInvertibilidadeMatriz(Matriz* matrizTriangular);
 
 // Cria uma matriz escalonada a partir da matriz triangular.
-double** criarMatrizEscalonada(int dimensao, double** matrizTriangular, Status *status);
+Matriz* criarMatrizEscalonada(Matriz* matrizTriangular, Status *status);
 
 // Cria a matriz inversa usando o algortimo de GaussJordan
-double** criarMatrizInversa(int dimensao, double** matriz);
+Matriz* criarMatrizInversa(Matriz* matriz);
 
 #endif
