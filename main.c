@@ -32,6 +32,7 @@ int main(void)
     // desalocacoes
     destruirMatriz(pMatriz);
     destruirMatriz(pMatrizTransposta);
+    destruirMatriz(pMatrizInversa);
     return 0;
 }
 
