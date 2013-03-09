@@ -25,6 +25,6 @@ void destruirMatriz(Matriz* matriz);
 Matriz* produto(Matriz matrizA, Matriz matrizB);
 
 // Obtem o transposto de uma matriz
-double** transposto(double** matriz, int linhas, int colunas);
+Matriz* transposto(Matriz matriz);
 
 #endif

@@ -64,7 +64,7 @@ Matriz* produto(Matriz matrizA, Matriz matrizB)
 
     pMatrizProduto = criarMatriz(matrizA.linhas, matrizB.colunas);
 
-    if(pMatrizProduto == NULL) goto tratarErro;
+    if(pMatrizProduto == NULL) return NULL;
 
     //Efetua a multiplicacao entre as matrizes
     for(i = 0; i < matrizA.linhas; i++)
@@ -76,45 +76,23 @@ Matriz* produto(Matriz matrizA, Matriz matrizB)
         }
     }
 
-retorno:
     return pMatrizProduto;
-tratarErro:
-    destruirMatriz(pMatrizProduto);
-    goto retorno;
 }
 
-double** transposto(double **matriz, int linhas, int colunas)
+Matriz *transposto(Matriz matriz)
 {
-    double** matrizTransposta = NULL;
+    Matriz* matrizTransposta = NULL;
     int i,j;
 
-    matrizTransposta = (double**) malloc(colunas*sizeof(double*));
-    if(matrizTransposta == NULL) goto tratarErro;
-    for(i = 0; i < colunas; i++)
-    {
-        matrizTransposta[i] = (double*) malloc(linhas*sizeof(double));
-        if(matrizTransposta[i] == NULL) goto tratarErro;
-    }
+    matrizTransposta = criarMatriz(matriz.colunas, matriz.linhas);
+    if(matrizTransposta == NULL) return NULL;
 
-    for(i = 0; i < colunas; i++)
-        for(j = 0; j < linhas; j++)
-            matrizTransposta[i][j] = matriz[j][i];
+    for(i = 0; i < matriz.linhas; i++)
+        for(j = 0; j < matriz.colunas; j++)
+            matrizTransposta->conteudo[j][i] = matriz.conteudo[i][j];
 
-retorno:
     return matrizTransposta;
 tratarErro:
-    if(matrizTransposta != NULL)
-    {
-        for(i = 0; i < colunas; i++)
-        {
-            if(matrizTransposta[i] != NULL)
-            {
-                free(matrizTransposta[i]);
-                matrizTransposta[i] = NULL;
-            }
-        }
-        free(matrizTransposta);
-        matrizTransposta = NULL;
-    }
-    goto retorno;
+    destruirMatriz(matrizTransposta);
+    return NULL;
 }
