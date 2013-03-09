@@ -48,7 +48,8 @@ Matriz *criarMatrizTriangular(Matriz *matrizAumentada, Status *status)
 {
     Matriz* matrizTriangular = NULL;
     double pivo, elemento;
-    int i,j;
+    double *linha = NULL;
+    int i,j,k;
     *status = sucesso;
 
     // Aloca a matriz triangular e verifica a alocacao
@@ -73,11 +74,15 @@ Matriz *criarMatrizTriangular(Matriz *matrizAumentada, Status *status)
             // dessa linha, deve-se multiplicar a primeira linha por b/a e subtrair
             // o resultado da linha inferior. Essa combinacao linear deve substituir
             // a linha cujo elemento sera zerado
-            matrizTriangular->conteudo[j] = combinacaoLinear(matrizTriangular->conteudo[i],
-                                                   matrizTriangular->conteudo[j],
-                                                   -elemento/pivo,
-                                                   1,
-                                                   2*matrizTriangular->linhas);
+            linha = combinacaoLinear(matrizTriangular->conteudo[i],
+                                     matrizTriangular->conteudo[j],
+                                     -elemento/pivo,
+                                     1,
+                                     2*matrizTriangular->linhas);
+            for(k = 0; k < matrizTriangular->colunas; k++)
+                matrizTriangular->conteudo[j][k] = linha[k];
+            free(linha);
+            linha = NULL;
         }
     }
     return matrizTriangular;
@@ -95,8 +100,9 @@ bool verificarInvertibilidadeMatriz(Matriz* matrizTriangular)
 Matriz *criarMatrizEscalonada(Matriz *matrizTriangular, Status *status)
 {
     double pivo, elemento;
+    double* linha = NULL;
     Matriz* matrizEscalonada = NULL;
-    int i,j;
+    int i,j,k;
     *status = sucesso;
     matrizEscalonada = criarMatriz(matrizTriangular->linhas,matrizTriangular->colunas);
     if(matrizEscalonada == NULL) return NULL;
@@ -113,11 +119,15 @@ Matriz *criarMatrizEscalonada(Matriz *matrizTriangular, Status *status)
         {
             pivo = matrizEscalonada->conteudo[i][i];
             elemento = matrizEscalonada->conteudo[j][i];
-            matrizEscalonada->conteudo[j] = combinacaoLinear(matrizEscalonada->conteudo[i],
-                                                   matrizEscalonada->conteudo[j],
-                                                   -elemento/pivo,
-                                                   1,
-                                                   2*matrizEscalonada->linhas);
+            linha = combinacaoLinear(matrizEscalonada->conteudo[i],
+                                      matrizEscalonada->conteudo[j],
+                                      -elemento/pivo,
+                                      1,
+                                      matrizEscalonada->colunas);
+            for(k = 0; k < matrizEscalonada->colunas; k++)
+                matrizEscalonada->conteudo[j][k] = linha[k];
+            free(linha);
+            linha = NULL;
         }
 
     // Divide cada linha pelo seu pivo
@@ -136,7 +146,7 @@ Matriz* criarMatrizInversa(Matriz *matriz)
 {
     int i, j;
     Status status;
-    Matriz *pMatrizAumentada, *pMatrizTriangular, *pMatrizEscalonada, *pMatrizInversa;
+    Matriz *pMatrizAumentada = NULL, *pMatrizTriangular = NULL, *pMatrizEscalonada = NULL, *pMatrizInversa = NULL;
 
     pMatrizAumentada = criarMatrizAumentada(matriz, &status);
     // Se ocorreu algum erro na criacao da matriz aumentada, retorna NULL
