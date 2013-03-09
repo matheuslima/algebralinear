@@ -92,7 +92,4 @@ Matriz *transposto(Matriz matriz)
             matrizTransposta->conteudo[j][i] = matriz.conteudo[i][j];
 
     return matrizTransposta;
-tratarErro:
-    destruirMatriz(matrizTransposta);
-    return NULL;
 }
