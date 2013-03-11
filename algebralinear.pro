@@ -10,6 +10,6 @@ SOURCES += main.c \
 HEADERS += \
     gaussJordan.h \
     util.h \
-    matrizes.h \
-    fatoracaoLU.h
+    fatoracaoLU.h \
+    matriz.h
 

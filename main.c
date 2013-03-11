@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "gaussJordan.h"
-#include "matrizes.h"
+#include "matriz.h"
 void imprimirMatriz(Matriz matriz);
 
 int main(void)

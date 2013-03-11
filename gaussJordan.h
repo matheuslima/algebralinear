@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "util.h"
-#include "matrizes.h"
+#include "matriz.h"
 
 // Macro para verificar se uma matriz eh quadrada
 #define MATRIZ_QUADRADA(matriz)(matriz->linhas == matriz->colunas)
