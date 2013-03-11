@@ -26,6 +26,10 @@ Matriz* criarMatriz(int linhas, int colunas);
 // de dimensao N
 Matriz* criarMatrizAumentada(Matriz* matriz, Status *status);
 
+// Efetua a combinacao linear entre dois vetores:
+// a*X + b*Y
+double* combinacaoLinear(double* X, double* Y, double a, double b, int tamanho);
+
 // Desaloca a matriz
 void destruirMatriz(Matriz* matriz);
 

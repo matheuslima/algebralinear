@@ -28,10 +28,6 @@
 #include "util.h"
 #include "matriz.h"
 
-// Efetua a combinacao linear entre dois vetores:
-// a*X + b*Y
-double* combinacaoLinear(double* X, double* Y, double a, double b, int tamanho);
-
 // Cria uma matriz triangular superior a partir da matriz aumentada.
 Matriz* criarMatrizTriangular(Matriz* matrizAumentada, Status *status);
 

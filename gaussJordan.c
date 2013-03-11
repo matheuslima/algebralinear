@@ -1,27 +1,5 @@
 #include "gaussJordan.h"
 
-double* combinacaoLinear(double *X, double *Y, double a, double b, int tamanho)
-{
-    int i;
-    double* vetor = NULL;
-    vetor = (double*) malloc(tamanho*sizeof(double));
-    if(vetor == NULL) goto tratarErro;
-
-    for(i = 0; i < tamanho; i++)
-    {
-        vetor[i] = a*X[i] + b*Y[i];
-    }
-    return vetor;
-    // Desaloca recurso caso haja problema na alocao de memoria
-tratarErro:
-    if(vetor != NULL)
-    {
-        free(vetor);
-        vetor = NULL;
-    }
-    return NULL;
-}
-
 Matriz *criarMatrizTriangular(Matriz *matrizAumentada, Status *status)
 {
     Matriz* matrizTriangular = NULL;
