@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "util.h"
 
 // Estrutura para abstrair uma matriz
 typedef struct{
@@ -12,6 +13,9 @@ typedef struct{
     int linhas; // numero de linhas da matriz
     int colunas; // numero de colunas da matriz
 }Matriz;
+
+// Macro para verificar se uma matriz eh quadrada
+#define MATRIZ_QUADRADA(matriz)(matriz->linhas == matriz->colunas)
 
 // Efetua a alocacao de uma matriz a partir da especificacao de suas dimensoes.
 // Todos os seus elementos sao inicializados com zero

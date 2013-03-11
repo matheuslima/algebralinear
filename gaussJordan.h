@@ -28,9 +28,6 @@
 #include "util.h"
 #include "matriz.h"
 
-// Macro para verificar se uma matriz eh quadrada
-#define MATRIZ_QUADRADA(matriz)(matriz->linhas == matriz->colunas)
-
 // Efetua a combinacao linear entre dois vetores:
 // a*X + b*Y
 double* combinacaoLinear(double* X, double* Y, double a, double b, int tamanho);
