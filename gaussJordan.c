@@ -1,27 +1,5 @@
 #include "gaussJordan.h"
 
-Matriz *criarMatrizAumentada(Matriz *matriz, Status *status)
-{
-    Matriz* matrizAumentada = NULL;
-    int i, j;
-    *status = sucesso;
-
-    if(!MATRIZ_QUADRADA(matriz)){*status = erroMatrizNaoInvertivel; return NULL;}
-
-    matrizAumentada = criarMatriz(matriz->linhas, 2*matriz->colunas);
-    if(matrizAumentada == NULL) return NULL;
-
-    // Copia a matriz passada como parametro para a metade esquerda da matriz aumentada
-    for(i = 0; i < matriz->linhas; i++)
-        for(j = 0; j < matriz->colunas; j++)
-            matrizAumentada->conteudo[i][j] = matriz->conteudo[i][j];
-    // Coloca uma matriz identidade na metdade direita da matriz aumentada
-    for(i = 0; i < matriz->linhas; i++)
-        matrizAumentada->conteudo[i][i+matriz->colunas] = 1;
-
-    return matrizAumentada;
-}
-
 double* combinacaoLinear(double *X, double *Y, double a, double b, int tamanho)
 {
     int i;

@@ -31,11 +31,6 @@
 // Macro para verificar se uma matriz eh quadrada
 #define MATRIZ_QUADRADA(matriz)(matriz->linhas == matriz->colunas)
 
-// Cria uma matriz aumentada de dimensao N x 2N a partir da matriz quadrada passada.
-// Essa matriz consiste da matriz passada como parametro ao lado da matriz identidade
-// de dimensao N
-Matriz* criarMatrizAumentada(Matriz* matriz, Status *status);
-
 // Efetua a combinacao linear entre dois vetores:
 // a*X + b*Y
 double* combinacaoLinear(double* X, double* Y, double a, double b, int tamanho);

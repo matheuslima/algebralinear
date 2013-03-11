@@ -17,6 +17,11 @@ typedef struct{
 // Todos os seus elementos sao inicializados com zero
 Matriz* criarMatriz(int linhas, int colunas);
 
+// Cria uma matriz aumentada de dimensao N x 2N a partir da matriz quadrada passada.
+// Essa matriz consiste da matriz passada como parametro ao lado da matriz identidade
+// de dimensao N
+Matriz* criarMatrizAumentada(Matriz* matriz, Status *status);
+
 // Desaloca a matriz
 void destruirMatriz(Matriz* matriz);
 
