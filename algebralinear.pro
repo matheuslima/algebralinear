@@ -5,7 +5,8 @@ CONFIG -= qt
 
 SOURCES += main.c \
     gaussJordan.c \
-    matriz.c
+    matriz.c \
+    fatoracaoLU.c
 
 HEADERS += \
     gaussJordan.h \
