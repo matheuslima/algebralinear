@@ -6,7 +6,8 @@
 void imprimirMatriz(Matriz matriz);
 
 #define MATRIX_FILE "matrix.dat"
-#define LENGTH_LINE 100*20
+#define MATRIX_DIMENSION 100
+#define LENGTH_LINE MATRIX_DIMENSION*20
 
 double **loadMatrix();
 
@@ -17,8 +18,8 @@ int main(void)
     struct timespec start, stop;
     if(matrix == NULL) exit(1);
     Matriz *pMatriz = NULL;
-    pMatriz = criarMatriz(100, 100);
-    for(i = 0; i < 100; i++)
+    pMatriz = criarMatriz(MATRIX_DIMENSION, MATRIX_DIMENSION);
+    for(i = 0; i < MATRIX_DIMENSION; i++)
         for(j = 0; j < 100; j++)
             pMatriz->conteudo[i][j] = matrix[i][j];
     clock_gettime(CLOCK_MONOTONIC, &start);
@@ -48,17 +49,17 @@ double **loadMatrix(){
     int i, j;
     if(line == NULL) return NULL;
     double **matrix = NULL;
-    matrix = (double **)malloc(100*sizeof(double*));
+    matrix = (double **)malloc(MATRIX_DIMENSION*sizeof(double*));
     if (matrix == NULL) return NULL;
-    for(i = 0; i < 100; i++){
-        matrix[i] = (double*)malloc(100*sizeof(double));
+    for(i = 0; i < MATRIX_DIMENSION; i++){
+        matrix[i] = (double*)malloc(MATRIX_DIMENSION*sizeof(double));
         if(matrix[i] == NULL) return NULL;
     }
 
     FILE *pFile = NULL;
     pFile = fopen(MATRIX_FILE, "r");
 
-    for(i = 0; i < 100; i++)
+    for(i = 0; i < MATRIX_DIMENSION; i++)
     {
         memset(line, '\0', LENGTH_LINE);
         j = 0;
@@ -69,7 +70,7 @@ double **loadMatrix(){
         j = 0;
         buffer = strtok(line, " ");
         matrix[i][j] = atof(buffer);
-        while(j < 99){
+        while(j < MATRIX_DIMENSION-1){
             j++;
             buffer = strtok(NULL, " ");
             matrix[i][j] = atof(buffer);
