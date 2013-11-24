@@ -132,3 +132,20 @@ Matriz* criarMatrizInversa(Matriz *matriz)
 
     return pMatrizInversa;
 }
+
+double determinant(Matriz *matriz){
+    Status status;
+    Matriz *pMatrizAumentada = NULL, *pMatrizTriangular = NULL;
+
+    pMatrizAumentada = criarMatrizAumentada(matriz, &status);
+    if(!OK(&status)) return 0;
+
+    pMatrizTriangular = criarMatrizTriangular(pMatrizAumentada, &status);
+    if(!OK(&status)) return 0;
+
+    double det = 1;
+    int i;
+    for(i = 0; i < matriz->linhas; i++)
+        det = det * pMatrizTriangular->conteudo[i][i];
+    return det;
+}

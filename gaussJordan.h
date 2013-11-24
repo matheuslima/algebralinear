@@ -42,4 +42,7 @@ Matriz* criarMatrizEscalonada(Matriz* matrizTriangular, Status *status);
 // Cria a matriz inversa usando o algortimo de GaussJordan
 Matriz* criarMatrizInversa(Matriz* matriz);
 
+// Usa o algoritmo de Gauss-Jordan para obter o determinante da matriz
+double determinant(Matriz* matriz);
+
 #endif
