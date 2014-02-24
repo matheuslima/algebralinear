@@ -1,6 +1,7 @@
 #include"gramSchmidt.h"
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<math.h>
 double *obterVetorUnitario(double *vetor, int tamanho)
 {
@@ -43,6 +44,7 @@ double *obterProjecao(double *vetorA, double *vetorB, int tamanho)
 		produto += vetorA[i]*vetorUnit[i];
 	for(i = 0; i < tamanho;i ++)
 		vetorResult[i] = produto*vetorUnit[i];
+	free(vetorUnit);
 	return vetorResult;
 
 }
@@ -52,6 +54,8 @@ double **obterBaseOrtonormal(double **vetores, int quantidade, int tamanho)
 	int i, j;
 	double **base = NULL;
 	base = (double **) malloc(quantidade*sizeof(double *));
+	double *projecao = NULL;
+	double *buffer = NULL;
 	if(base == NULL) return NULL;
 
 	for(i = 0; i < quantidade; i++)
@@ -62,9 +66,15 @@ double **obterBaseOrtonormal(double **vetores, int quantidade, int tamanho)
 		base[i] = vetores[i];
 		for(j = 0; j < i; j++)
 		{
-			base[i] =  subtrairVetores(base[i],obterProjecao(vetores[i], vetores[j], tamanho), tamanho);
+			projecao = obterProjecao(vetores[i], vetores[j], tamanho);
+			buffer =   subtrairVetores(base[i], projecao, tamanho);
+			memcpy(base[i],buffer, tamanho*sizeof(double));
+			free(projecao);
+			free(buffer);
 		}
-		base[i] =  obterVetorUnitario(base[i], tamanho);
+		buffer =  obterVetorUnitario(base[i], tamanho);
+		memcpy(base[i], buffer, tamanho*sizeof(double));
+		free(buffer);
 	}
 
 	return base;

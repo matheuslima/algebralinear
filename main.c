@@ -13,31 +13,30 @@ double **loadMatrix();
 
 int main(void)
 {
-	double vetor[] = {1, 2, 3};
-	double *vetorUnit = obterVetorUnitario(vetor, 3);
-	double vetA[] = {1, 2, 3};
-	double vetB[] = {1, -2, 3};
-	double *proj = NULL;
-	double **base = NULL;
-	double **vetores = NULL;
 	int i, j;
-	printf("Vetor unitario: [%f, %f, %f]\n", vetorUnit[0], vetorUnit[1], vetorUnit[2]);
-	proj = obterProjecao(vetA, vetB, 2);
-	printf("Projecao de [1 2 3] sobre [1 -2 3]: [%f %f]\n", proj[0], proj[1]);
-	printf("Base ortonormal de [1 2 3] e [1 -2 3]:\n");
+	double **vetores = NULL;
+	double **base = NULL;
 	vetores = (double **) malloc(2*sizeof(double *));
-	if(vetores == NULL) return -1;
-	vetores[0] = vetA;
-	vetores[1] = vetB;
-	base = obterBaseOrtonormal(vetores, 2, 3);
+	vetores[0] = (double *) malloc(3*sizeof(double));
+	vetores[1] = (double *) malloc(3*sizeof(double));
+	vetores[0][0] = 1; vetores[0][1] = 2; vetores[0][2] = 3;
+	vetores[1][0] = 1; vetores[1][1] = -2; vetores[1][2] = 3;
+	base = (double **) obterBaseOrtonormal(vetores, 2, 3);
+	printf("Base de [1 2 3] e [1 -2 3]:\n");
 	for(i = 0; i < 2; i++)
 	{
 		printf("[ ");
 		for(j = 0; j < 3; j++)
 			printf("%f ", base[i][j]);
 		printf("]\n");
-
 	}
+	for(i = 0; i < 2; i++)
+	{
+		free(vetores[i]);
+		free(base[i]);
+	}
+	free(vetores);
+	free(base);
     	return 0;
 }
 
